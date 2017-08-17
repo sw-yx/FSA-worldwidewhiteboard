@@ -1,7 +1,6 @@
 var socket = io(window.location.origin);
 
 socket.on("drew", data => {
-    console.log(data);
     window.whiteboard.draw(data.start, data.end, data.strokeColor);
 })
 
@@ -18,5 +17,3 @@ socket.on('firstConnect', state => {
 window.whiteboard.on("draw", (start, end, strokeColor) => {
     socket.emit("drewsomething", {start, end, strokeColor});
 })
-
-//start, end, strokeColor, shouldBroadcast
