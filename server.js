@@ -11,27 +11,26 @@ var server = app.listen(process.env.PORT || 1337, function () {
 
 var io = socketio(server);
 
-var state = [];
+var state = {'lobby': []};
 
 io.on('connection', function (socket) {
     console.log('A new client has connected!');
-    console.log(socket.id);
-
-
-    socket.emit("firstConnect", state);
+    var room = socket.handshake.headers.referer.split('/').slice(-1)[0] || 'lobby'
+    if (room) socket.join(room)
+    if (room && !state[room]) state[room] = []
+    io.sockets.in(room).emit("firstConnect", state[room])
 
     socket.on('disconnect', socket => {
         console.log(socket + 'has disconnected');
     });
-
     socket.on('drewsomething', data => {
-        socket.broadcast.emit("drew", data);
-        state.push(data);
+        io.sockets.in(room).emit("drew", data)
+        state[room].push(data);
     })
 });
 
 app.use(express.static(path.join(__dirname, 'browser')));
 
-app.get('/', function (req, res) {
+app.get('/:roomid?', function (req, res) {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
