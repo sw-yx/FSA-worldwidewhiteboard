@@ -11,9 +11,14 @@ var server = app.listen(1337, function () {
 
 var io = socketio(server);
 
+var state = [];
+
 io.on('connection', function (socket) {
     console.log('A new client has connected!');
     console.log(socket.id);
+
+
+    socket.emit("firstConnect", state);
 
     socket.on('disconnect', socket => {
         console.log(socket + 'has disconnected');
@@ -21,6 +26,7 @@ io.on('connection', function (socket) {
 
     socket.on('drewsomething', data => {
         socket.broadcast.emit("drew", data);
+        state.push(data);
     })
 });
 
