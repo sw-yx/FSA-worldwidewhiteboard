@@ -5,7 +5,7 @@ var socketio = require('socket.io');
 
 // app.listen() returns an http.Server object
 // http://expressjs.com/en/4x/api.html#app.listen
-var server = app.listen(1337, function () {
+var server = app.listen(process.env.PORT || 1337, function () {
     console.log('The server is listening on port 1337!');
 });
 
